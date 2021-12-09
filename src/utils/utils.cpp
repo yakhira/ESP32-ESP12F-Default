@@ -10,6 +10,7 @@ ESPUtils::~ESPUtils(){
 void ESPUtils::mountFS(){
     if (!fsMounted) {
         LittleFS.begin();
+		fsMounted = true;
     }
 }
 
