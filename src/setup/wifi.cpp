@@ -7,6 +7,7 @@
 #include <WebServer.h>
 WebServer server(8080);
 #else
+#include <ESP8266WebServer.h>
 ESP8266WebServer server(8080);
 #endif
 
