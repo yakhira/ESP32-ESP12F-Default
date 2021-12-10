@@ -70,6 +70,8 @@ void ESPWiFi::wifiConnect(){
         WiFi.hostname(JSON.stringify(wifiConfig["hostname"]));
         WiFi.setAutoReconnect(true);
 
+        pinMode(0, INPUT_PULLUP);
+
         while (WiFi.status() != WL_CONNECTED){
             stateCheck();
             delay(500);
@@ -168,12 +170,12 @@ void ESPWiFi::handleUpdateSketch(){
 }
 
 void ESPWiFi::stateCheck(){
-    if (digitalRead(0) == LOW){
-        mountFS();
-        LittleFS.remove(configFile);
-    }
     if (isWebServerRunning) {
         server.handleClient();
+    } else {
+        if (digitalRead(0) == LOW){
+            removeFile(configFile);
+        }
     }
 }
 

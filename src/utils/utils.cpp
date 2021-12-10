@@ -10,8 +10,12 @@ ESPUtils::~ESPUtils(){
 void ESPUtils::mountFS(){
     if (!fsMounted) {
         LittleFS.begin();
-		fsMounted = true;
     }
+}
+
+void ESPUtils::removeFile(String filename) {
+	mountFS();
+	LittleFS.remove(filename);
 }
 
 void ESPUtils::saveFile(String filename, JSONVar data) {
