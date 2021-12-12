@@ -7,7 +7,9 @@ ESPWiFi espwifi("ESP32-D0WDQ5");
 
 void setup() {
 	espwifi.wifiConnect();
-	espwifi.updateSketch(SKETCH_VERSION);
+	if (WiFi.getMode() == WIFI_STA) {
+		espwifi.updateSketch(SKETCH_VERSION);
+	}
 }
 
 void loop() {
