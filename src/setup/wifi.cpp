@@ -16,35 +16,29 @@ String ESPWiFi::espChipName;
 String ESPWiFi::otaUpdateUrl;
 String ESPWiFi::dataUrl;
 
+#if defined(ESP32)
 const char *ESPWiFi::defaultWifiPassword = "ESPp@$$w0rd!";
+#else
+const String ESPWiFi::defaultWifiPassword = "ESPp@$$w0rd!";
+#endif
+
 const String ESPWiFi::configFile = "/wifi_config.json";
 
 ESPWiFi::ESPWiFi(String chipName){
     isWebServerRunning = false;
     espChipName = chipName;
+    resetCount = 0;
 }
 
 ESPWiFi::~ESPWiFi(){
 
 }
 
-char *ESPWiFi::genUniqueHostname(String prefix, String macAddress){
-	macAddress.replace(":", "");
-
-	String s_hostname = prefix + "-" + macAddress;
-    unsigned int len = s_hostname.length() + 1;
-    char hostname[len];
-
-	s_hostname.toCharArray(hostname, len);
-
-	return hostname;
-}
-
 void ESPWiFi::loadConfig(){
     readFile(configFile, wifiConfig);
 
     otaUpdateUrl = JSON.stringify(wifiConfig["ota_update_url"]);
-    dataUrl = JSON.stringify(wifiConfig["sleep_state_url"]);
+    dataUrl = JSON.stringify(wifiConfig["data_url"]);
 
     otaUpdateUrl.replace("\"", "");
     dataUrl.replace("\"", "");
@@ -56,9 +50,19 @@ void ESPWiFi::wifiConnect(){
     IPAddress gateway;
     IPAddress subnet;
 
-    char *hostname = genUniqueHostname("ESP-AP", WiFi.macAddress());
+    String macAddress = WiFi.macAddress();
+    macAddress.replace(":", "");
 
     loadConfig();
+
+    #if defined(ESP32)
+    String tmp_hostname = "ESP-AP-" + macAddress;
+    unsigned int len = tmp_hostname.length() + 1;
+    char hostname[len];
+	tmp_hostname.toCharArray(hostname, len);
+    #else
+    String hostname =  "ESP-AP-" + macAddress;
+    #endif
 
     if (wifiConfig.hasOwnProperty("wifi_ssid") && wifiConfig.hasOwnProperty("wifi_password"))
     {
@@ -181,7 +185,14 @@ void ESPWiFi::stateCheck(){
         server.handleClient();
     } else {
         if (digitalRead(0) == LOW){
-            removeFile(configFile);
+            if (resetCount > 500) {
+                removeFile(configFile);
+                resetCount = 0;
+            } else {
+                resetCount+=1;
+            }
+        } else {
+            resetCount = 0;
         }
     }
 }
