@@ -1,9 +1,14 @@
+# ESP32 default sketch
+
 ## WIFI setup
 
-SSID: ESP-<random>
-PASSWORD: ESPp@$$w0rd!
-IP: 192.168.4.1
-PORT: 8080
+* Upload Filesystem image
+* Upload sketch
+* Connect to http://192.168.4.1
+
+        SSID: ESP-\<random\><br />
+        PASSWORD: ESPp@$$w0rd!<br />
+        PORT: 80<br />
 
 ## Reset
 

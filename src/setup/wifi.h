@@ -5,11 +5,7 @@
 
 class ESPWiFi: public ESPUtils {
     private:
-        #if defined(ESP32)
         static const char *defaultWifiPassword;
-        #else
-        static const String defaultWifiPassword;
-        #endif
         static const String configFile;
         static String espChipName;
         static JSONVar wifiConfig;
