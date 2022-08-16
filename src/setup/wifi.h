@@ -14,12 +14,11 @@ class ESPWiFi: public ESPUtils {
         bool isWebServerRunning;
         int resetCount;
 
+        AsyncWebServer *server;
+
     public:
         ESPWiFi(String chipName);
         ~ESPWiFi();
-
-        static void handleMain();
-        static void handleSave();
 
         void wifiConnect();
         void stateCheck();
